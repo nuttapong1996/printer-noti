@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<iframe id="myIframe" width="600" height="400"></iframe>
+
+<script>
+    // ดึงค่าจาก URL ปัจจุบัน
+    const params = new URLSearchParams(window.location.search);
+    const page = params.get("text"); // สมมติว่าต้องการส่งค่า page
+
+    if(page != null){
+        document.getElementById("myIframe").src = "https://api.telegram.org/bot8166759091:AAGFSD0CEsTyg-QFC31iJpvkjeZbpuzQ1Hs/sendMessage?chat_id=-1002354157606&text="+page; // กำหนดค่าเริ่มต้น
+    }
+</script>
+</body>
+</html>
