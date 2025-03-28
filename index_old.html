@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        video { width: 100%; max-width: 500px; border: 2px solid #000; }
+    </style>
+</head>
+<body>
+    <h2>สแกน QR Code</h2>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" hidden></canvas>
+    <p id="output"></p>
+
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const output = document.getElementById("output");
+        const ctx = canvas.getContext("2d");
+
+        let scanning = true; // ตัวแปรควบคุมสถานะการสแกน
+        let stream; // ตัวแปรเก็บ stream ของกล้อง
+
+        // ขอสิทธิ์เข้าถึงกล้อง
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(s => {
+                stream = s;
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true);
+                requestAnimationFrame(scanQR);
+            })
+            .catch(err => console.error("ไม่สามารถเข้าถึงกล้อง:", err));
+
+        function scanQR() {
+            if (!scanning) return; // ถ้าหยุดสแกนแล้ว ให้หยุดการทำงาน
+
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const qrCode = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: "dontInvert" });
+
+                if (qrCode) {
+                    const url = qrCode.data;
+                    output.textContent = `พบ QR Code: ${url}`;
+
+                    if (isValidURL(url)) {
+                        stopScanning(); // หยุดกล้องและหยุดการสแกน
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 1000);
+                    }
+                }
+            }
+            requestAnimationFrame(scanQR);
+        }
+
+        function stopScanning() {
+            scanning = false; // เปลี่ยนสถานะเป็นหยุดสแกน
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop()); // ปิดกล้อง
+            }
+            video.srcObject = null; // ล้าง video source
+        }
+
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สแกน QR Code</title>
+</head>
+<body>
+
+    <h2>กรุณาสแกน QR Code</h2>
+    <video id="video" width="300" height="225" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <p id="qrResult">📷 กำลังรอการสแกน...</p>
+
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+    <script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const qrResult = document.getElementById("qrResult");
+
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(stream => {
+            video.srcObject = stream;
+            video.play();
+            scanQRCode();
+        })
+        .catch(err => {
+            qrResult.innerText = "🚨 ไม่สามารถเปิดกล้องได้: " + err;
+        });
+    }
+
+    function scanQRCode() {
+         // ดึงค่าจาก URL ปัจจุบัน
+    const params = new URLSearchParams(window.location.search);
+    const page = params.get("text"); // สมมติว่าต้องการส่งค่า page
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                let qrText = code.data;
+                console.log("🔍 พบ QR Code:", qrText); // Debug ค่า QR Code
+                qrResult.innerHTML = `✅ พบ QR Code: <a href="${qrText}" target="_blank">${qrText+page}</a>`;
+
+                // เช็คว่า URL ถูกต้องหรือไม่
+                if (qrText.startsWith("https://api.telegram.org")) {
+                    console.log("✅ ลิงก์ Telegram ถูกต้อง กำลังเปิด...");
+                    window.location.href = qrText+page; // เปิดลิงก์ที่สแกนได้
+                } else {
+                    console.warn("⚠️ QR Code ไม่ใช่ Telegram URL:", qrText);
+                }
+                return;
+            }
+        }
+        requestAnimationFrame(scanQRCode); // Loop การสแกน
+    }
+
+    window.onload = startCamera;
+    </script>
+
+</body>
+</html>
