@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <iframe src="" frameborder="0" id="url_hold"></iframe>
+</body>
+</html>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const params = new URLSearchParams(window.location.search);
+        const page = params.get("url"); // สมมติว่าต้องการส่งค่า page
+        const text = params.get("text");
+        const url_hold = document.getElementById('url_hold');
+        url_hold.src = page+"&text="+text;
+        setTimeout(() => {
+            window.close();
+        }, 1000);
+    });
+</script>
