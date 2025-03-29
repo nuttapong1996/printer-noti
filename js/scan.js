@@ -65,10 +65,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (qrText.startsWith("https://api.telegram.org")) {
                     // console.log("✅ ลิงก์ Telegram ถูกต้อง กำลังเปิด...");
                     qrResult.innerHTML = `✅ พบ QR Code: <br> <a href="${qrText}" target="_blank">${qrText+page}</a>`;
-                    window.open("result.html?url="+qrText+page+" ปริ้นเสร็จแล้ว \n"+new Date().toLocaleString("th-TH"));
-                    setTimeout(() => {
-                        window.location.href = "index.html"; 
-                    }, 1000);
+                    window.location.href = "result.html?url="+qrText+page+" ปริ้นเสร็จแล้ว \n"+new Date().toLocaleString("th-TH");
                 } else {
                     console.warn("⚠️ QR Code ไม่ใช่ Telegram URL:", qrText);
                 }

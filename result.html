@@ -9,8 +9,6 @@
     <iframe src="" frameborder="0" id="url_hold"></iframe>
 </body>
 </html>
-
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const params = new URLSearchParams(window.location.search);
@@ -19,7 +17,7 @@
         const url_hold = document.getElementById('url_hold');
         url_hold.src = page+"&text="+text;
         setTimeout(() => {
-            window.close();
-        }, 1000);
+            window.location.href = "index.html";
+        },1000)
     });
 </script>
