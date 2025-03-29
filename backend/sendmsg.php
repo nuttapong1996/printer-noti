@@ -14,6 +14,8 @@ $Chat_ID = $_ENV['CHAT_ID'];
 
 $url = "https://api.telegram.org/bot$Bot_Token/sendMessage?chat_id=$Chat_ID&text=$data[text]";
 
-$result = file_get_contents($url, false);
-echo $result;
+// $result = file_get_contents($url, false);
+// echo $result;
+file_get_contents($url, false);
+
 ?>

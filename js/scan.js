@@ -1,6 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {        
-    LaunchUrl();
+    // LaunchUrl();
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get("text"); // สมมติว่าต้องการส่งค่า page
+    const jobname = document.getElementById("jobname");
+    const page_title = document.getElementById("page_title");
     startCamera();
+    page_title.innerHTML = msg;
+    jobname.innerHTML = msg;
 });
 
     function startCamera() {
