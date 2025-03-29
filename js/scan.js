@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const msg = params.get("text"); // สมมติว่าต้องการส่งค่า page
         let url_text = encodeURIComponent(msg+" เริ่มปริ้น\n"+new Date().toLocaleString("th-TH"));
         const jobname = document.getElementById("jobname");
+        const page_title = document.getElementById("page_title");
+        page_title.innerHTML = msg;
         jobname.innerHTML = msg;
 
         try {
