@@ -54,25 +54,12 @@
         });
     }
 
-    async function LaunchUrl(Token,chatId) {
-
+    function LaunchUrl(url) {
         const url_contain = document.getElementById('startUrl');
         const params = new URLSearchParams(window.location.search);
         const page = params.get("text"); // สมมติว่าต้องการส่งค่า page
         let url_text = encodeURIComponent(page+" เริ่มปริ้น\n"+new Date().toLocaleString("th-TH"));
-
-        const response = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${chatId}&text=${url_text}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        // url_contain.src
-        
-    const data = await response.json();
-    return data;
-
+        url_contain.src = url+url_text;
         
     }
 
@@ -109,13 +96,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-
-        const telegramToken = process.env.TELEGRAM_API_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
-
-        LaunchUrl(telegramToken,chatId);
-
-        // LaunchUrl("https://api.telegram.org/bot8166759091:AAGFSD0CEsTyg-QFC31iJpvkjeZbpuzQ1Hs/sendMessage?chat_id=-1002354157606&text=");
+        
+        LaunchUrl("https://api.telegram.org/bot8166759091:AAGFSD0CEsTyg-QFC31iJpvkjeZbpuzQ1Hs/sendMessage?chat_id=-1002354157606&text=");
         startCamera();
     });
     </script>
