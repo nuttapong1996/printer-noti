@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/font.css">
+    
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+    <script src="js/scan.js"></script>
     <title>สแกน QR Code</title>
 </head>
 <body class="bg-light prompt-regular">
@@ -19,7 +22,7 @@
             <div class="col-md-6">
                 <div class="card bg-white shadowrounded-3">
                     <h2 class="card-header d-flex justify-content-between align-items-center bg-black text-white">
-                        <b>กรุณาสแกน QR Code</b>
+                        <b id="jobname">กรุณาสแกน QR Code</b>
                         <a class="btn btn-danger btn-lg fs" href="index.html">&times;</a>
                     </h2>
                     <div class="card-body p-3 text-center">
@@ -34,73 +37,5 @@
             </div>
         </div>
     </main>
-
-    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
-    <script>
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const qrResult = document.getElementById("qrResult");
-
-    function startCamera() {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(stream => {
-            video.srcObject = stream;
-            video.play();
-            scanQRCode();
-        })
-        .catch(err => {
-            qrResult.innerText = "🚨 ไม่สามารถเปิดกล้องได้: " + err;
-        });
-    }
-
-    function LaunchUrl(url) {
-        const url_contain = document.getElementById('startUrl');
-        const params = new URLSearchParams(window.location.search);
-        const page = params.get("text"); // สมมติว่าต้องการส่งค่า page
-        let url_text = encodeURIComponent(page+" เริ่มปริ้น\n"+new Date().toLocaleString("th-TH"));
-        url_contain.src = url+url_text;
-        
-    }
-
-    function scanQRCode() {
-    // ดึงค่าจาก URL ปัจจุบัน
-    const params = new URLSearchParams(window.location.search);
-    const page = params.get("text"); // สมมติว่าต้องการส่งค่า page
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            let code = jsQR(imageData.data, imageData.width, imageData.height);
-
-            if (code) {
-                let qrText = code.data;
-
-                // เช็คว่า URL ถูกต้องหรือไม่
-                if (qrText.startsWith("https://api.telegram.org")) {
-                    // console.log("✅ ลิงก์ Telegram ถูกต้อง กำลังเปิด...");
-                    qrResult.innerHTML = `✅ พบ QR Code: <a href="${qrText}" target="_blank">${qrText+page}</a>`;
-                    window.open("result.html?url="+qrText+page+" ปริ้นเสร็จแล้ว : \n"+new Date().toLocaleString("th-TH"));
-                    setTimeout(() => {
-                        window.location.href = "index.html"; 
-                    }, 1000);
-                } else {
-                    console.warn("⚠️ QR Code ไม่ใช่ Telegram URL:", qrText);
-                }
-                return;
-            }
-        }
-        requestAnimationFrame(scanQRCode); // Loop การสแกน
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        
-        LaunchUrl("https://api.telegram.org/bot8166759091:AAGFSD0CEsTyg-QFC31iJpvkjeZbpuzQ1Hs/sendMessage?chat_id=-1002354157606&text=");
-        startCamera();
-    });
-    </script>
-
 </body>
 </html>
