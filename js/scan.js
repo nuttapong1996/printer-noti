@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {        
-    // LaunchUrl();
     const params = new URLSearchParams(window.location.search);
     const msg = params.get("text"); // สมมติว่าต้องการส่งค่า page
     const jobname = document.getElementById("jobname");
@@ -14,39 +13,13 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(stream => {
             video.srcObject = stream;
             video.play();
-            scanQRCode();
+            setInterval(scanQRCode, 5000);
         })
         .catch(err => {
             qrResult.innerText = "🚨 ไม่สามารถเปิดกล้องได้: " + err;
         });
     }
 
-   async function LaunchUrl() {
-        const params = new URLSearchParams(window.location.search);
-        const msg = params.get("text"); // สมมติว่าต้องการส่งค่า page
-        let url_text = encodeURIComponent(msg+" เริ่มปริ้น\n"+new Date().toLocaleString("th-TH"));
-        const jobname = document.getElementById("jobname");
-        const page_title = document.getElementById("page_title");
-        page_title.innerHTML = msg;
-        jobname.innerHTML = msg;
-
-        try {
-            const response = await fetch('./backend/sendmsg.php',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: JSON.stringify({text : url_text})
-            });
-
-            if (response.ok) {
-                console.log('Data sent successfully');
-            }
-            
-        } catch (error) {
-            console.error('Error fetching data:'+ error);
-        }
-    }
 
     function scanQRCode() {
     const video = document.getElementById("video");
